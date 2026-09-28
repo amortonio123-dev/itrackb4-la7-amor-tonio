@@ -4,46 +4,23 @@
 
 @section('content')
 
-<h2>Movie Details</h2>
+<h2 class="mb-4">🎬 Movie Details</h2>
 
-<div class="card mt-3" style="max-width: 500px;">
+<table class="table table-bordered table-striped" style="max-width: 500px;">
+    <tr>
+        <th style="width: 120px;">ID</th>
+        <td>{{ $movie['id'] }}</td>
+    </tr>
+    <tr>
+        <th>Title</th>
+        <td>{{ $movie['title'] }}</td>
+    </tr>
+    <tr>
+        <th>Genre</th>
+        <td>{{ $movie['genre'] }}</td>
+    </tr>
+</table>
 
-    <div class="card-body">
-
-        <h4 class="card-title">
-            {{ $movie['title'] }}
-        </h4>
-
-        <p>
-            <strong>Full Name:</strong> Aira Basco
-        </p>
-
-        <p>
-            <strong>ID:</strong> {{ $movie['id'] }}
-        </p>
-
-        <p>
-            <strong>Title:</strong> {{ $movie['title'] }}
-        </p>
-
-        <p>
-            <strong>Author:</strong> {{ $movie['author'] }}
-        </p>
-
-        <p>
-            <strong>Genre:</strong> {{ $movie['genre'] }}
-        </p>
-
-        <p>
-            <strong>Year:</strong> {{ $movie['year'] }}
-        </p>
-
-        <a href="{{ route('movies.index') }}" class="btn btn-secondary">
-            Back to Movies
-        </a>
-
-    </div>
-
-</div>
+<a href="{{ route('movies.index') }}" class="btn btn-primary">← Back to All Movies</a>
 
 @endsection

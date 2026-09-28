@@ -1,41 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Movie Filter</title>
-</head>
-<body>
+<?php
 
-    h1>Movie Filter</h1>
+namespace App\Http\Controllers;
 
-    <p><strong>Full Name:</strong> Aira Basco</p>
+use Illuminate\Http\Request;
 
-    <p>{{ $message }}</p>
+class FilterController extends Controller
+{
+    private function getAllMovies()
+    {
+        return [
+            1 => [
+                'id' => 1,
+                'title' => 'The House of Us',
+                'genre' => 'Romance / Drama',
+            ],
+            2 => [
+                'id' => 2,
+                'title' => 'Hello, Love, Again',
+                'genre' => 'Romance',
+            ],
+            3 => [
+                'id' => 3,
+                'title' => 'Avengers: The Way Home',
+                'genre' => 'Action',
+            ],
+            4 => [
+                'id' => 4,
+                'title' => 'Barbie',
+                'genre' => 'Comedy / Self-help',
+            ],
+            5 => [
+                'id' => 5,
+                'title' => 'Four Sisters and a Wedding',
+                'genre' => 'Drama',
+            ],
+            6 => [
+                'id' => 6,
+                'title' => 'Everything Everywhere All at Once',
+                'genre' => 'Sci-Fi',
+            ],
+            7 => [
+                'id' => 7,
+                'title' => 'Crazy Rich Asians',
+                'genre' => 'Romance',
+            ],
+        ];
+    }
 
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Director</th>
-            <th>Genre</th>
-            <th>Year</th>
-        </tr>
+    public function index(Request $request)
+    {
+        $movies = $this->getAllMovies();
 
-        @foreach ($movies as $movie)
-            <tr>
-                <td>{{ $movie['id'] }}</td>
-                <td>{{ $movie['title'] }}</td>
-                <td>{{ $movie['director'] }}</td>
-                <td>{{ $movie['genre'] }}</td>
-                <td>{{ $movie['year'] }}</td>
-            </tr>
-        @endforeach
-    </table>
+        $genre = $request->query('genre', '');
+        $title = $request->query('title', '');
 
-    <br>
+        if ($genre !== '') {
+            $movies = array_filter($movies, function ($movie) use ($genre) {
+                return stripos($movie['genre'], $genre) !== false;
+            });
+        }
 
-    <a href="{{ route('movies.index') }}">
-        ← Back to Movies
-    </a>
+        if ($title !== '') {
+            $movies = array_filter($movies, function ($movie) use ($title) {
+                return stripos($movie['title'], $title) !== false;
+            });
+        }
 
-</body>
-</html>
+        return view('movies.index', [
+            'movies' => $movies,
+            'genre' => $genre,
+            'title' => $title,
+        ]);
+    }
+
+    public function show($id)
+    {
+        $movies = $this->getAllMovies();
+
+        abort_if(!isset($movies[$id]), 404);
+
+        return view('movies.show', [
+            'movie' => $movies[$id],
+        ]);
+    }
+}
