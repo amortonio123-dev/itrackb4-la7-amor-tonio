@@ -4,70 +4,179 @@
 
 @section('content')
 
-<h1 class="mb-4">🎬 Movie List</h1>
+<div class="container mt-4">
 
-{{-- Filter Links --}}
-<div class="mb-4">
-    <strong>Filter by Genre:</strong>
-    <a href="{{ route('movies.index', ['genre' => 'Romance']) }}" class="btn btn-sm btn-outline-primary ms-2">Romance</a>
-    <a href="{{ route('movies.index', ['genre' => 'Drama']) }}" class="btn btn-sm btn-outline-primary ms-1">Drama</a>
-    <a href="{{ route('movies.index', ['genre' => 'Action']) }}" class="btn btn-sm btn-outline-primary ms-1">Action</a>
-    <a href="{{ route('movies.index', ['genre' => 'Comedy / Self-help']) }}" class="btn btn-sm btn-outline-primary ms-1">Comedy</a>
-    <a href="{{ route('movies.index', ['genre' => 'Sci-Fi']) }}" class="btn btn-sm btn-outline-primary ms-1">Sci-Fi</a>
-    <a href="{{ route('movies.index') }}" class="btn btn-sm btn-secondary ms-2">Clear All</a>
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h1>Movies</h1>
+
+    </div>
+
+
+    <!-- Navigation -->
+    <div class="mb-3">
+
+        <a href="{{ route('movies.index') }}"
+           class="btn btn-secondary">
+            All Movies
+        </a>
+
+        <a href="{{ route('movies.featured') }}"
+           class="btn btn-primary">
+            Featured
+        </a>
+
+        <a href="{{ route('movies.filter', ['genre' => 'Sci-Fi']) }}"
+           class="btn btn-info">
+            Sci-Fi
+        </a>
+
+        <a href="{{ route('movies.filter', ['genre' => 'Action']) }}"
+           class="btn btn-warning">
+            Action
+        </a>
+
+        <a href="{{ route('movies.filter', ['genre' => 'Crime']) }}"
+           class="btn btn-danger">
+            Crime
+        </a>
+
+    </div>
+
+
+    <!-- List of Recommendations -->
+    <div class="card mb-4">
+
+        <div class="card-header bg-primary text-white">
+            List of Recommendations
+        </div>
+
+        <div class="card-body">
+
+            <ul class="list-group">
+
+                <li class="list-group-item">
+                    <strong>Inception</strong>
+                    - Sci-Fi - 2010
+                </li>
+
+                <li class="list-group-item">
+                    <strong>The Dark Knight</strong>
+                    - Action - 2008
+                </li>
+
+                <li class="list-group-item">
+                    <strong>The Godfather</strong>
+                    - Crime - 1972
+                </li>
+
+                <li class="list-group-item">
+                    <strong>Interstellar</strong>
+                    - Sci-Fi - 2014
+                </li>
+
+                <li class="list-group-item">
+                    <strong>The Matrix</strong>
+                    - Sci-Fi - 1999
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Movies Table -->
+
+    <h2>All Movies</h2>
+
+    <table class="table table-bordered table-striped">
+
+        <thead class="table-dark">
+
+            <tr>
+
+                <th>ID</th>
+                <th>Title</th>
+                <th>Director</th>
+                <th>Genre</th>
+                <th>Year</th>
+                <th>Action</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @forelse ($movies as $movie)
+
+                <tr>
+
+                    <td>{{ $movie['id'] }}</td>
+
+                    <td>{{ $movie['title'] }}</td>
+
+                    <td>{{ $movie['director'] }}</td>
+
+                    <td>{{ $movie['genre'] }}</td>
+
+                    <td>{{ $movie['year'] }}</td>
+
+                    <td>
+
+                        <a href="{{ route('movies.show', $movie['id']) }}"
+                           class="btn btn-info btn-sm">
+                            View
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td colspan="6"
+                        class="text-center">
+                        No movies found.
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
+
+
+    <!-- Add Movie -->
+
+    <div class="text-center mt-4">
+
+        <a href="{{ route('movies.create') }}"
+           class="btn btn-success btn-lg">
+            + Add Movie
+        </a>
+
+    </div>
+
+
+    <!-- Prepared By -->
+
+    <div class="text-center mt-5 mb-3">
+
+        <p class="mb-0">
+            Prepared by:
+            <strong>Aira Basco</strong>
+        </p>
+
+    </div>
+
 </div>
-
-{{-- Search + Genre Combined --}}
-<div class="mb-4">
-    <form action="{{ route('movies.index') }}" method="GET" class="row g-2">
-        <div class="col-auto">
-            <input type="text" name="search" class="form-control" placeholder="Search title..." value="{{ request('search') }}">
-        </div>
-        <div class="col-auto">
-            <select name="genre" class="form-select">
-                <option value="">All Genres</option>
-                <option value="Romance" @selected(request('genre') === 'Romance')>Romance</option>
-                <option value="Drama" @selected(request('genre') === 'Drama')>Drama</option>
-                <option value="Action" @selected(request('genre') === 'Action')>Action</option>
-                <option value="Comedy / Self-help" @selected(request('genre') === 'Comedy / Self-help')>Comedy</option>
-                <option value="Sci-Fi" @selected(request('genre') === 'Sci-Fi')>Sci-Fi</option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Apply</button>
-            @if(request()->hasAny(['genre', 'search']))
-                <a href="{{ route('movies.index') }}" class="btn btn-secondary">Reset</a>
-            @endif
-        </div>
-    </form>
-</div>
-
-{{-- Movie Table --}}
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($movies as $movie)
-        <tr>
-            <td>{{ $movie['id'] }}</td>
-            <td>{{ $movie['title'] }}</td>
-            <td>{{ $movie['genre'] }}</td>
-            <td>
-                <a href="{{ route('movies.show', $movie['id']) }}" class="btn btn-sm btn-info">View</a>
-            </td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-
-<p class="text-center mt-5 text-muted">
-    <strong>Prepared by:</strong> Edshieline Kaye Ternida
-</p>
 
 @endsection

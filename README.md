@@ -1,9 +1,13 @@
-Laboratory Activity 6
+ ITRACKB4 LA7 - Movie Application
 
-Q1 I did not need to add another route because the router matches the path of the request, not the query string values. The URLs `/movies`, `/movies?genre=Sci-Fi`, and `/movies?year=2014` all use the same `/movies` path. The query string only changes the data that the index method displays.
+ Q1. Why does the form use POST instead of GET?
 
-Q2 If both filters were route parameters, the values would become part of the route itself. For example, a URL for year 2014 without a genre would need a route structure that allows the genre parameter to be skipped while still providing the year parameter. This would make the URLs and routes more complicated compared with using query strings for filters.
+The form uses POST because it is sending data that will be saved as a new movie. If GET was used, the submitted information would become part of the URL and the browser could repeat the request when the page is refreshed. This could cause the same movie to be saved again. POST with redirect helps avoid that problem.
 
- Q3 The pattern needed to change for the detail page because the detail URL is longer than the list URL, such as `/movies/3`. I used `movies*` so the navigation can match both the list and detail pages. The filter did not require another change because a query string does not change the path, so `/movies?genre=Sci-Fi` still has `/movies` as its path.
+ Q2. What stops the save when validation fails?
 
- Q4 I removed the old filter method because it was replaced by the new query-string filtering implementation. Keeping it would leave two different implementations for the same filtering task, with the old one no longer being used. I kept the empty store and update methods because those are unfinished controller methods for future activities, so they represent work that still needs to be implemented.
+The `$request->validate()` method checks the submitted values before the save code continues. When a rule fails, Laravel automatically stops the controller at that point and redirects the visitor back to the form with the validation errors and old input. Because the code after validation is not reached, the movie is not saved.
+
+ Q3. Why does the success message only appear once?
+
+The success message is stored in the session using `with('success', ...)` when the movie is saved. The layout checks the session and displays the message because the layout is loaded on every page. However, the session message is temporary, so after it is read, it does not keep appearing when the visitor goes to another page.

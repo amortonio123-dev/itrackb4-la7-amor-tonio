@@ -1,12 +1,24 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('movies.index') }}">🎬 Movies</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('movies.index') ? 'active text-white' : '' }}" href="{{ route('movies.index') }}">Movie List</a>
-                </li>
-            </ul>
+
+        <a class="navbar-brand"
+           href="{{ route('movies.index') }}">
+            Movie App
+        </a>
+
+        <div class="navbar-nav">
+
+            <a class="nav-link"
+               href="{{ route('movies.index') }}">
+                Movies
+            </a>
+
+            <a class="nav-link"
+               href="{{ route('movies.featured') }}">
+                Featured
+            </a>
+
         </div>
+
     </div>
 </nav>

@@ -8,43 +8,107 @@ class MovieController extends Controller
 {
     private function getAllMovies()
     {
-        return [
-            1 => ['id' => 1, 'title' => 'The House of Us', 'genre' => 'Romance / Drama'],
-            2 => ['id' => 2, 'title' => 'Hello, Love, Again', 'genre' => 'Romance'],
-            3 => ['id' => 3, 'title' => 'Avengers: The Way Home', 'genre' => 'Action'],
-            4 => ['id' => 4, 'title' => 'Barbie', 'genre' => 'Comedy / Self-help'],
-            5 => ['id' => 5, 'title' => 'Four Sisters and a Wedding', 'genre' => 'Drama'],
-            6 => ['id' => 6, 'title' => 'Everything Everywhere All at Once', 'genre' => 'Sci-Fi'],
-        ];
+        $path = storage_path('app/movies.json');
+
+        if (!file_exists($path)) {
+            return [];
+        }
+
+        $json = file_get_contents($path);
+
+        $movies = json_decode($json, true);
+
+        return $movies ?? [];
     }
 
-    public function index(Request $request)
+    private function saveMovies($movies)
     {
-        $genre = $request->query('genre');
-        $search = $request->query('search');
+        $path = storage_path('app/movies.json');
+
+        file_put_contents(
+            $path,
+            json_encode($movies, JSON_PRETTY_PRINT)
+        );
+    }
+
+    public function index()
+    {
+        $movies = $this->getAllMovies();
+
+        return view('movies.index', compact('movies'));
+    }
+
+    public function create()
+    {
+        return view('movies.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'title' => 'required|max:100',
+            'director' => 'required|max:100',
+            'genre' => 'required|in:Sci-Fi,Action,Crime',
+            'year' => 'required|numeric|min:1900|max:2026',
+        ]);
 
         $movies = $this->getAllMovies();
 
+        $newId = empty($movies)
+            ? 1
+            : max(array_column($movies, 'id')) + 1;
+
+        $movies[$newId] = [
+            'id' => $newId,
+            'title' => $validated['title'],
+            'director' => $validated['director'],
+            'genre' => $validated['genre'],
+            'year' => $validated['year'],
+        ];
+
+        $this->saveMovies($movies);
+
+        return redirect()
+            ->route('movies.index')
+            ->with('success', 'Movie added successfully!');
+    }
+
+    public function featured()
+    {
+        $movies = $this->getAllMovies();
+
+        $featured = array_filter($movies, function ($movie) {
+            return $movie['year'] >= 2010;
+        });
+
+        return view('movies.index', [
+            'movies' => $featured
+        ]);
+    }
+
+    public function filter($genre = null)
+    {
+        $movies = $this->getAllMovies();
+
         if ($genre) {
-            $movies = array_filter($movies, fn($m) => $m['genre'] === $genre);
+            $movies = array_filter($movies, function ($movie) use ($genre) {
+                return strtolower($movie['genre']) === strtolower($genre);
+            });
         }
 
-        if ($search) {
-            $movies = array_filter($movies, fn($m) => stripos($m['title'], $search) !== false);
-        }
-
-        return view('movies.index', compact('movies', 'genre', 'search'));
+        return view('movies.filter', compact('movies', 'genre'));
     }
 
     public function show($id)
     {
         $movies = $this->getAllMovies();
-        
+
         if (!isset($movies[$id])) {
             abort(404);
         }
 
         $movie = $movies[$id];
+
         return view('movies.show', compact('movie'));
     }
 }

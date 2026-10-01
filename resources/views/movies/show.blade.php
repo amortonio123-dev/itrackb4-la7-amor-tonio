@@ -4,23 +4,44 @@
 
 @section('content')
 
-<h2 class="mb-4">🎬 Movie Details</h2>
+<div class="container mt-4">
 
-<table class="table table-bordered table-striped" style="max-width: 500px;">
-    <tr>
-        <th style="width: 120px;">ID</th>
-        <td>{{ $movie['id'] }}</td>
-    </tr>
-    <tr>
-        <th>Title</th>
-        <td>{{ $movie['title'] }}</td>
-    </tr>
-    <tr>
-        <th>Genre</th>
-        <td>{{ $movie['genre'] }}</td>
-    </tr>
-</table>
+    <h1>{{ $movie['title'] }}</h1>
 
-<a href="{{ route('movies.index') }}" class="btn btn-primary">← Back to All Movies</a>
+    <table class="table table-bordered">
+
+        <tr>
+            <th>ID</th>
+            <td>{{ $movie['id'] }}</td>
+        </tr>
+
+        <tr>
+            <th>Title</th>
+            <td>{{ $movie['title'] }}</td>
+        </tr>
+
+        <tr>
+            <th>Director</th>
+            <td>{{ $movie['director'] }}</td>
+        </tr>
+
+        <tr>
+            <th>Genre</th>
+            <td>{{ $movie['genre'] }}</td>
+        </tr>
+
+        <tr>
+            <th>Year</th>
+            <td>{{ $movie['year'] }}</td>
+        </tr>
+
+    </table>
+
+    <a href="{{ route('movies.index') }}"
+       class="btn btn-secondary">
+        Back to Movies
+    </a>
+
+</div>
 
 @endsection
